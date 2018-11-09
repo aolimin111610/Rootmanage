@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        body{color:#868686;font-size:14px;padding:0;margin:0;}
+        #form { background:#dedede; padding:10px 20px; width:500px;}
+        #name{margin-bottom: 10px;}
+        #content{width: 180px;height: 100px;}
+        #sub{ margin:10px 20px;}
+        #res{ margin:10px 20px;}
+        #contents{background:#f6f6f6;padding:10px 20px; width:500px;}
+        #contents p{margin:6px; font-size:13px; line-height:22px; border-bottom:1px dashed #cdcdcd;}
+    </style>
+
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+-->
+</head>
+<body>
+<div id="form">
+    <form  method="post"  id="suggest_form">
+        用户名：<input type="text" name="name" id="name"/><br/>
+        内&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;容: <textarea name="content" id="content"></textarea><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+       <button id="sub">提交</button>
+        <input type="reset" value="重置" id="res"/>
+    </form>
+</div>
+<div id="contents">
+    <h2>留言列表</h2>
+    {volist name="list" id="vo"}
+    <table>
+        <tr>
+            <td>留言者：</td>
+            <td>{$vo.name}</td>
+        </tr>
+        <tr>
+            <td>留言内容：</td>
+            <td>{$vo.content}</td>
+        </tr>
+        <tr>
+            <td>留言时间：</td>
+            <td>{$vo.createAt|date='Y-m-d H:i:s',###}</td>
+            <p></p>
+        </tr>
+    </table>
+    {/volist}
+</div>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                //添加留言按钮的点击事件
+                $('#sub').click(function(){
+                    if($('#name').val()===''){
+                        $('#name').focus();
+                        return false;
+                    }
+                    if($('#content').val()===''){
+                        $('#content').focus();
+                        return false;
+                    }
+
+                    var suggest_form = $('#suggest_form');
+                    $.post('index/index/add',suggest_form.serialize(),function(str){
+                        if(str==='error'){
+                            return false;
+                        }
+                        data = $.parseJSON(str);
+                        $('#contents').prepend(
+                            '<tr>'+'<td>'+data['name']+'</td>'+'</tr>'+
+                            '<tr>'+'<td>'+data['content']+'</td>'+'</tr>'+
+                            '<tr>'+'<td>'+data['createAt']+'</td>'+'</tr>'
+                        )
+                    });
+
+                });
+            });
+        </script>
+</body>
+</html>
